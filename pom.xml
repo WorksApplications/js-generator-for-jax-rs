@@ -10,7 +10,7 @@
   <artifactId>js-generator-for-jax-rs</artifactId>
   <packaging>maven-plugin</packaging>
   <name>a Maven plugin to generate JavaScript for JAX-RS</name>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
