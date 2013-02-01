@@ -34,9 +34,11 @@ This plugin will parse classes in `packageName`, and output JavaScript files int
     </build>
 ```
 
-## modify `.gitignore` to ignore generated code
+## ignore generated code
 Generated code should not be stored in version management system like git.
 So it is good to put them into `target` directory.
+
+If you cannot, please modify `.gitignore` to ignore generated code.
 
 ## kick Maven to generate JavaScript
 In this case, `process-sources` goal will generate JavaScript into `target/js/jax-rs`.
