@@ -7,7 +7,7 @@ define(['jquery', 'exports'], function($, exports) {
         cache: false,
         url: baseURL + '/sample/',
         type: 'get',
-        data: data
+        data: {'message':data.message}
     }).promise();
   };
   exports.postCat = function (data) {
@@ -15,7 +15,7 @@ define(['jquery', 'exports'], function($, exports) {
         cache: false,
         url: baseURL + '/sample/cat',
         type: 'post',
-        data: data
+        data: {'foo':data.foo,'bar':data.bar}
     }).promise();
   };
   exports.callDog = function (data) {
@@ -23,7 +23,7 @@ define(['jquery', 'exports'], function($, exports) {
         cache: false,
         url: baseURL + '/sample/dog/' + encodeURI(data.name),
         type: 'put',
-        data: data
+        data: {}
     }).promise();
   };
 });

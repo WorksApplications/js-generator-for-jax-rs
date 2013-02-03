@@ -18,21 +18,18 @@ enum ArgumentInterface {
         }
 
         @Override
-        String generateData(List<String> argumentName) {
-            Function<String, String> createJsonPair = new Function<String, String>() {
+        String generatePathParam(String pathParam) {
+            return pathParam;
+        }
+
+        @Override
+        Function<String, String> createJsonPair() {
+            return new Function<String, String>() {
                 @Override
                 public String apply(String input) {
                     return String.format("'%s':%s", input, input);
                 }
             };
-            return "{" + COMMA_JOINER.join(
-                    Iterators.transform(argumentName.iterator(), createJsonPair))
-                    + "}";
-        }
-
-        @Override
-        String generatePathParam(String pathParam) {
-            return pathParam;
         }
     },
 
@@ -47,13 +44,18 @@ enum ArgumentInterface {
         }
 
         @Override
-        String generateData(List<String> argumentName) {
-            return "data";
+        String generatePathParam(String pathParam) {
+            return "data." + pathParam;
         }
 
         @Override
-        String generatePathParam(String pathParam) {
-            return "data." + pathParam;
+        Function<String, String> createJsonPair() {
+            return new Function<String, String>() {
+                @Override
+                public String apply(String input) {
+                    return String.format("'%s':data.%s", input, input);
+                }
+            };
         }
     };
 
@@ -71,7 +73,11 @@ enum ArgumentInterface {
      * @param argumentName list of argument name (excluding "path param")
      * @return generated object, you can use this String directly
      */
-    abstract String generateData(List<String> argumentName);
+    String generateData(List<String> argumentName) {
+        return "{" + COMMA_JOINER.join(
+                Iterators.transform(argumentName.iterator(), createJsonPair()))
+                + "}";
+    }
     /**
      * <p>Generate name of path parameter.
      *
@@ -79,4 +85,5 @@ enum ArgumentInterface {
      * @return generated string, you need to wrap this String by {@code encodeURI} method.
      */
     abstract String generatePathParam(String pathParam);
+    abstract Function<String, String> createJsonPair();
 }
