@@ -2,6 +2,23 @@
 This Maven plugin helps you to generate JavaScript to commnicate with server.
 It parses your controllers, and generate JavaScript files to send Ajax request.
 
+Here is an example. Generated JavaScript depends on [jQuery](http://jquery.com/) and [RequireJS](http://requirejs.org/).
+
+```javascript
+define(['jquery', 'exports'], function($, exports) {
+  'use strict';
+  var baseURL = $('meta[name="app-data"]').data('context-path') + '/resources';
+  exports.load = function (message) {
+    return $.ajax({
+        cache: false,
+        url: baseURL + '/sample/',
+        type: 'get',
+        data: {'message':message}
+    }).promise();
+  };
+});
+```
+
 # How to use
 
 ## modify your pom.xml
