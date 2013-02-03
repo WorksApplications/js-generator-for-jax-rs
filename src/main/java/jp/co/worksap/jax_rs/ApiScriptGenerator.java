@@ -39,7 +39,7 @@ public class ApiScriptGenerator {
         this.controllers = controllers;
     }
 
-    public void execute(File outputDir, String metaTagName, String dataNameToGetContextPath) throws IOException {
+    public void execute(File outputDir, String metaTagName, String dataNameToGetContextPath, ArgumentInterface argumentInterface) throws IOException {
         Preconditions.checkNotNull(outputDir);
         Preconditions.checkArgument(outputDir.isDirectory());
         for (Class<?> clazz : controllers) {
