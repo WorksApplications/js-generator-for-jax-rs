@@ -24,15 +24,12 @@ import javax.ws.rs.core.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 
 public class ApiScriptGenerator {
-    private static final Joiner COMMA_JOINER = Joiner.on(',');
     private final Class<?>[] controllers;
 
     public ApiScriptGenerator(Class<?>... controllers) {
@@ -42,13 +39,14 @@ public class ApiScriptGenerator {
     public void execute(File outputDir, String metaTagName, String dataNameToGetContextPath, ArgumentInterface argumentInterface) throws IOException {
         Preconditions.checkNotNull(outputDir);
         Preconditions.checkArgument(outputDir.isDirectory());
+        Preconditions.checkNotNull(argumentInterface);
         for (Class<?> clazz : controllers) {
             File js = new File(outputDir, createModuleNameOf(clazz) + ".js");
-            write(clazz, js, metaTagName, dataNameToGetContextPath);
+            write(clazz, js, metaTagName, dataNameToGetContextPath, argumentInterface);
         }
     }
 
-    private void write(Class<?> clazz, File js, String metaTagName, String dataNameToGetContextPath) throws IOException {
+    private void write(Class<?> clazz, File js, String metaTagName, String dataNameToGetContextPath, ArgumentInterface argumentInterface) throws IOException {
         Function<String, String> createJsonPair = new Function<String, String>() {
             @Override
             public String apply(String input) {
@@ -70,7 +68,7 @@ public class ApiScriptGenerator {
                 if (!method.getDeclaringClass().equals(clazz)) {
                     continue;
                 }
-                writeMethod(clazz, createJsonPair, writer, method);
+                writeMethod(clazz, createJsonPair, writer, method, argumentInterface);
             }
             writer.write("});");
         } finally {
@@ -106,24 +104,22 @@ public class ApiScriptGenerator {
 
     private List<String> writeMethod(Class<?> clazz,
             Function<String, String> createJsonPair, BufferedWriter writer,
-            Method method) throws IOException {
+            Method method, ArgumentInterface argumentInterface) throws IOException {
         List<String> argumentName = getArgumentName(method);
 
         writer.write("  exports.");
         writer.write(method.getName());
         writer.write(" = function (");
 
-        writer.write(COMMA_JOINER.join(argumentName));
+        writer.write(argumentInterface.generateArgument(argumentName));
         writer.write(") {\n");
         writer.write("    return $.ajax({\n        cache: false,\n        url: baseURL + ");
-        writer.write(getPathOf(clazz, method));
+        writer.write(getPathOf(clazz, method, argumentInterface));
         writer.write(",\n        type: '");
         writer.write(getTypeOf(method));
-        writer.write("',\n        data: {");
-        writer.write(COMMA_JOINER.join(
-                Iterators.transform(getFormOrQueryParamName(method).iterator(),
-                        createJsonPair)));
-        writer.write("}\n    }).promise();\n  };\n");
+        writer.write("',\n        data: ");
+        writer.write(argumentInterface.generateData(getFormOrQueryParamName(method)));
+        writer.write("\n    }).promise();\n  };\n");
         return argumentName;
     }
 
@@ -133,11 +129,11 @@ public class ApiScriptGenerator {
         return result.toString();
     }
 
-    private String getPathOf(Class<?> clazz, Method method) {
+    private String getPathOf(Class<?> clazz, Method method, ArgumentInterface argumentInterface) {
         UriBuilder builder = UriBuilder.fromResource(clazz).path(method);
         Map<String, String> pathParams = Maps.newHashMap();
         for (String pathParam : getPathParamName(method)) {
-            pathParams.put(pathParam, "' + encodeURI(" + pathParam + ") + '");
+            pathParams.put(pathParam, "' + encodeURI(" + argumentInterface.generatePathParam(pathParam) + ") + '");
         }
         String path = "\'" + builder.buildFromMap(pathParams).getPath();
         if (path.endsWith(" + \'")) {

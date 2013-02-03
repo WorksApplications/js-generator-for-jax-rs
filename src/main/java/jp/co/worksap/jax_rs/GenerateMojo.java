@@ -55,6 +55,11 @@ public final class GenerateMojo extends AbstractMojo {
      * @required
      */
     private String dataNameToGetContextPath;
+    /**
+     * @parameter default-value="SAME_TO_JAVA"
+     * @required
+     */
+    private ArgumentInterface argumentInterface;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -68,7 +73,7 @@ public final class GenerateMojo extends AbstractMojo {
             Constructor<?> constructor = generatorClass.getConstructor(Class[].class);
             Object generator = constructor.newInstance(new Object[]{controllerClasses});
             Method execute = generatorClass.getMethod("execute", File.class, String.class, String.class);
-            execute.invoke(generator, outputDirectory, metaTagName, dataNameToGetContextPath);
+            execute.invoke(generator, outputDirectory, metaTagName, dataNameToGetContextPath, argumentInterface);
         } catch (IOException e) {
             throw new MojoExecutionException("IOException occurs", e);
         } catch (DependencyResolutionRequiredException e) {
