@@ -72,7 +72,7 @@ public final class GenerateMojo extends AbstractMojo {
             Class<?> generatorClass = newLoader.loadClass(ApiScriptGenerator.class.getName());
             Constructor<?> constructor = generatorClass.getConstructor(Class[].class);
             Object generator = constructor.newInstance(new Object[]{controllerClasses});
-            Method execute = generatorClass.getMethod("execute", File.class, String.class, String.class);
+            Method execute = generatorClass.getMethod("execute", File.class, String.class, String.class, ArgumentInterface.class);
             execute.invoke(generator, outputDirectory, metaTagName, dataNameToGetContextPath, argumentInterface);
         } catch (IOException e) {
             throw new MojoExecutionException("IOException occurs", e);
