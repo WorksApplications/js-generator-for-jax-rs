@@ -21,8 +21,8 @@ import com.google.common.io.Files;
 public class ApiScriptGeneratorTest {
     @Test
     public void testDefault() throws IOException {
-        File expect = new File("src/test/expect/default/simpleAPI.js");
-        File actual = new File("target/actual/default/simpleAPI.js");
+        File expect = new File("src/test/expect/same_to_java/simpleAPI.js");
+        File actual = new File("target/actual/same_to_java/simpleAPI.js");
         Files.createParentDirs(actual);
         new ApiScriptGenerator(SimpleAPI.class).execute(actual.getParentFile(), "app-data", "context-path", SAME_TO_JAVA);
 

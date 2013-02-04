@@ -56,7 +56,7 @@ public final class GenerateMojo extends AbstractMojo {
      */
     private String dataNameToGetContextPath;
     /**
-     * @parameter default-value="SAME_TO_JAVA"
+     * @parameter default-value="ONE_OBJECT"
      * @required
      */
     private ArgumentInterface argumentInterface;
