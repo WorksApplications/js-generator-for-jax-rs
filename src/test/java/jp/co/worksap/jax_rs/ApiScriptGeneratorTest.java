@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 import jp.co.worksap.jax_rs.sample.SimpleAPI;
+import jp.co.worksap.jax_rs.sample.SimpleInterface;
 
 import org.junit.Test;
 
@@ -23,6 +24,24 @@ public class ApiScriptGeneratorTest {
         File actual = new File("target/actual/simpleAPI.js");
         Files.createParentDirs(actual);
         new ApiScriptGenerator(SimpleAPI.class).execute(actual.getParentFile(), "app-data", "context-path");
+
+        List<String> expectedCode = Files.readLines(expect, Charsets.UTF_8);
+        List<String> actualCode = Files.readLines(actual, Charsets.UTF_8);
+        if (!expectedCode.equals(actualCode)) {
+            System.err.println("expected:");
+            System.err.println(Files.toString(expect, Charsets.UTF_8));
+            System.err.println("actual:");
+            System.err.println(Files.toString(actual, Charsets.UTF_8));
+            fail();
+        }
+    }
+
+    @Test
+    public void testGenerateFromInterface() throws IOException {
+        File expect = new File("src/test/expect/simpleInterface.js");
+        File actual = new File("target/actual/simpleInterface.js");
+        Files.createParentDirs(actual);
+        new ApiScriptGenerator(SimpleInterface.class).execute(actual.getParentFile(), "app-data", "context-path");
 
         List<String> expectedCode = Files.readLines(expect, Charsets.UTF_8);
         List<String> actualCode = Files.readLines(actual, Charsets.UTF_8);
