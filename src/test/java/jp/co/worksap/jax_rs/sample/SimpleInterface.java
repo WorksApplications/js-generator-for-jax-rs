@@ -7,5 +7,6 @@ import javax.ws.rs.core.Response;
 @Path("/foo")
 public interface SimpleInterface {
     @GET
-    Response get();
+    @Path("/resource")
+    Response getResource();
 }

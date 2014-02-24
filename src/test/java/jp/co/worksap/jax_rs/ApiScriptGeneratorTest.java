@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 import jp.co.worksap.jax_rs.sample.SimpleAPI;
-import jp.co.worksap.jax_rs.sample.SimpleInterface;
+import jp.co.worksap.jax_rs.sample.SimpleImplementation;
 
 import org.junit.Test;
 
@@ -36,22 +36,15 @@ public class ApiScriptGeneratorTest {
         }
     }
 
-    @Test
-    public void testGenerateFromInterface() throws IOException {
-        File expect = new File("src/test/expect/simpleInterface.js");
-        File actual = new File("target/actual/simpleInterface.js");
+    /**
+     * <p>We do not support inheritance of annotations applied to interface types.</p>
+     * @see https://github.com/WorksApplications/js-generator-for-jax-rs/issues/4
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testGenerateFromImplementation() throws IOException {
+        File actual = new File("target/actual/simpleImplementation.js");
         Files.createParentDirs(actual);
-        new ApiScriptGenerator(SimpleInterface.class).execute(actual.getParentFile(), "app-data", "context-path");
-
-        List<String> expectedCode = Files.readLines(expect, Charsets.UTF_8);
-        List<String> actualCode = Files.readLines(actual, Charsets.UTF_8);
-        if (!expectedCode.equals(actualCode)) {
-            System.err.println("expected:");
-            System.err.println(Files.toString(expect, Charsets.UTF_8));
-            System.err.println("actual:");
-            System.err.println(Files.toString(actual, Charsets.UTF_8));
-            fail();
-        }
+        new ApiScriptGenerator(SimpleImplementation.class).execute(actual.getParentFile(), "app-data", "context-path");
     }
 
     @Test
