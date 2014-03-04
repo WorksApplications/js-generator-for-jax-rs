@@ -21,36 +21,49 @@ import org.apache.maven.project.MavenProject;
 import com.google.common.collect.Lists;
 
 /**
+ * <p>Generate JavaScript code which connect to JAX-RS Server.
+ * It uses Java controller to generate JavaScript code, and put them into specified directory.
+ *
+ * <p>See also: https://github.com/WorksApplications/js-generator-for-jax-rs
+ *
  * @goal generate
  * @phase process-classes
  * @author Kengo TODA
  */
 public final class GenerateMojo extends AbstractMojo {
     /**
-     * Package which target controllers belong.
+     * <p>Package which target controllers belong.
      *
      * @parameter
      * @required
      */
     protected String packageName;
     /**
-     * Place where generated scripts will be stored.
+     * <p>Directory where generated scripts will be stored.
      *
      * @parameter
      * @required
      */
     protected File outputDirectory;
     /**
-     * @parameter expression="${project}"
+     * @parameter property="project"
      * @required
      */
     private MavenProject project;
     /**
+     * <p>Name of meta tag to get context path.
+     * If your page has a meta tag like below, this parameter should be &quot;application-data&quot;.
+     *
+     * <p>{@code <meta name="application-data" data-context-path="context-path">}
      * @parameter default-value="application-data"
      * @required
      */
     private String metaTagName;
     /**
+     * <p>Name of data attribute to get context path.
+     * If your page has a meta tag like below, this parameter should be &quot;context-path&quot;.
+     *
+     * <p>{@code <meta name="app-data" data-context-path="context-path">}
      * @parameter default-value="context-path"
      * @required
      */
