@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 import jp.co.worksap.jax_rs.sample.SimpleAPI;
+import jp.co.worksap.jax_rs.sample.SimpleImplementation;
 
 import org.junit.Test;
 
@@ -33,6 +34,17 @@ public class ApiScriptGeneratorTest {
             System.err.println(Files.toString(actual, Charsets.UTF_8));
             fail();
         }
+    }
+
+    /**
+     * <p>We do not support inheritance of annotations applied to interface types.</p>
+     * @see https://github.com/WorksApplications/js-generator-for-jax-rs/issues/4
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testGenerateFromImplementation() throws IOException {
+        File actual = new File("target/actual/simpleImplementation.js");
+        Files.createParentDirs(actual);
+        new ApiScriptGenerator(SimpleImplementation.class).execute(actual.getParentFile(), "app-data", "context-path");
     }
 
     @Test
