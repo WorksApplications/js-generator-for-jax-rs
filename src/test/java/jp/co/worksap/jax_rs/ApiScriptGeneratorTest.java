@@ -1,5 +1,7 @@
 package jp.co.worksap.jax_rs;
 
+import static jp.co.worksap.jax_rs.ArgumentInterface.ONE_OBJECT;
+import static jp.co.worksap.jax_rs.ArgumentInterface.SAME_TO_JAVA;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -19,11 +21,29 @@ import com.google.common.io.Files;
 
 public class ApiScriptGeneratorTest {
     @Test
-    public void testGenerate() throws IOException {
-        File expect = new File("src/test/expect/simpleAPI.js");
-        File actual = new File("target/actual/simpleAPI.js");
+    public void testDefault() throws IOException {
+        File expect = new File("src/test/expect/same_to_java/simpleAPI.js");
+        File actual = new File("target/actual/same_to_java/simpleAPI.js");
         Files.createParentDirs(actual);
-        new ApiScriptGenerator(SimpleAPI.class).execute(actual.getParentFile(), "app-data", "context-path");
+        new ApiScriptGenerator(SimpleAPI.class).execute(actual.getParentFile(), "app-data", "context-path", SAME_TO_JAVA);
+
+        List<String> expectedCode = Files.readLines(expect, Charsets.UTF_8);
+        List<String> actualCode = Files.readLines(actual, Charsets.UTF_8);
+        if (!expectedCode.equals(actualCode)) {
+            System.err.println("expected:");
+            System.err.println(Files.toString(expect, Charsets.UTF_8));
+            System.err.println("actual:");
+            System.err.println(Files.toString(actual, Charsets.UTF_8));
+            fail();
+        }
+    }
+
+    @Test
+    public void testOneObjectStyle() throws IOException {
+        File expect = new File("src/test/expect/one_object_interface/simpleAPI.js");
+        File actual = new File("target/actual/one_object_interface/simpleAPI.js");
+        Files.createParentDirs(actual);
+        new ApiScriptGenerator(SimpleAPI.class).execute(actual.getParentFile(), "app-data", "context-path", ONE_OBJECT);
 
         List<String> expectedCode = Files.readLines(expect, Charsets.UTF_8);
         List<String> actualCode = Files.readLines(actual, Charsets.UTF_8);
